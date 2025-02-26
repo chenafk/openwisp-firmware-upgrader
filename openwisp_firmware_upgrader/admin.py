@@ -220,7 +220,7 @@ class BuildAdmin(BaseAdmin):
         )
 
     upgrade_selected.short_description = (
-        'Mass-upgrade devices related ' 'to the selected build'
+        _('Mass-upgrade devices related to the selected build')
     )
 
     def change_view(self, request, object_id, form_url='', extra_context=None):

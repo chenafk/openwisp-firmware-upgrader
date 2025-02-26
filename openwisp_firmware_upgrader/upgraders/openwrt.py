@@ -111,7 +111,7 @@ class OpenWrt(object):
                 raise FirmwareUpgradeOptionsException(
                     {
                         'upgrade_options': _(
-                            'The "-n" and "-o" options cannot be used together'
+                            "The '-n' and '-o' options cannot be used together"
                         )
                     }
                 )
@@ -119,7 +119,7 @@ class OpenWrt(object):
                 raise FirmwareUpgradeOptionsException(
                     {
                         'upgrade_options': _(
-                            'The "-n" and "-c" options cannot be used together'
+                            "The '-n' and '-c' options cannot be used together"
                         )
                     }
                 )
@@ -205,11 +205,11 @@ class OpenWrt(object):
                 'fails unexpectedly because these services will not be restarted '
                 'automatically.\n'
                 'NOTE: The reboot can be avoided if the status of the upgrade becomes '
-                '"aborted" because in this case the system will restart the '
-                'services automatically.'.format(
+                "'aborted' because in this case the system will restart the "
+                'services automatically.').format(
                     file_size_mib=file_size_mib, free_memory_mib=free_memory_mib
                 )
-            )
+            
         )
         self._stop_non_critical_services()
         self._free_memory()
@@ -222,16 +222,16 @@ class OpenWrt(object):
                 _(
                     'Enough available memory was freed up on the system '
                     '({0} MiB)!\n'
-                    'Proceeding to upload of the image file...'.format(free_memory_mib)
-                )
+                    'Proceeding to upload of the image file...').format(free_memory_mib)
+                
             )
         else:
             self.log(
                 _(
                     'There is still not enough available memory on '
                     'the system ({0} MiB).\n'
-                    'Starting non critical services again...'.format(free_memory_mib)
-                )
+                    'Starting non critical services again...').format(free_memory_mib)
+                
             )
             self._start_non_critical_services()
             self.log(_('Non critical services started, aborting upgrade.'))
@@ -405,8 +405,8 @@ class OpenWrt(object):
         self.log(
             _(
                 'SSH connection closed, will wait {0} '
-                'seconds before attempting to reconnect...'.format(self.RECONNECT_DELAY)
-            )
+                'seconds before attempting to reconnect...').format(self.RECONNECT_DELAY)
+            
         )
         sleep(self.RECONNECT_DELAY)
         # kill the subprocess if it has hanged
@@ -453,10 +453,10 @@ class OpenWrt(object):
         addresses = ', '.join(self.addresses)
         self.log(
             _(
-                'Trying to reconnect to device at {addresses} (attempt n.{attempt})...'.format(
+                'Trying to reconnect to device at {addresses} (attempt n.{attempt})...').format(
                     addresses=addresses, attempt=attempt
                 )
-            ),
+            ,
             save=False,
         )
 
@@ -473,15 +473,15 @@ class OpenWrt(object):
                 self.log(
                     _(
                         'Device not reachable yet, ({0}).\n'
-                        'retrying in {1} seconds...'.format(
+                        'retrying in {1} seconds...').format(
                             error, self.RECONNECT_RETRY_DELAY
                         )
-                    )
+                    
                 )
                 sleep(self.RECONNECT_RETRY_DELAY)
                 continue
             self._log_reconnecting_error(attempt)
-            self.log(_('Connected! Writing checksum ' f'file to {self.CHECKSUM_FILE}'))
+            self.log(_('Connected! Writing checksum ' f'file to') + {self.CHECKSUM_FILE})
             checksum_dir = os.path.dirname(self.CHECKSUM_FILE)
             self.exec_command(f'mkdir -p {checksum_dir}')
             self.exec_command(f'echo {checksum} > {self.CHECKSUM_FILE}')

@@ -70,8 +70,8 @@ class UpgradeOptionsMixin(models.Model):
 
 
 class AbstractCategory(OrgMixin, TimeStampedEditableModel):
-    name = models.CharField(max_length=64, db_index=True)
-    description = models.TextField(blank=True)
+    name = models.CharField(verbose_name = _('name'), max_length=64, db_index=True)
+    description = models.TextField(verbose_name = _('description'), blank=True)
 
     def __str__(self):
         return self.name
@@ -94,7 +94,7 @@ class AbstractBuild(TimeStampedEditableModel):
             'create a category for each.'
         ),
     )
-    version = models.CharField(max_length=32, db_index=True)
+    version = models.CharField(verbose_name = _('version'), max_length=32, db_index=True)
     os = models.CharField(
         _('OS identifier'),
         max_length=64,
@@ -417,7 +417,7 @@ class AbstractBatchUpgradeOperation(UpgradeOptionsMixin, TimeStampedEditableMode
 
     class Meta:
         abstract = True
-        verbose_name = _('Mass upgrade operation')
+        verbose_name = _('Mass upgrade operations')
         verbose_name_plural = _('Mass upgrade operations')
 
     def __str__(self):
@@ -560,12 +560,12 @@ class AbstractUpgradeOperation(UpgradeOptionsMixin, TimeStampedEditableModel):
         swapper.get_model_name('config', 'Device'), on_delete=models.CASCADE
     )
     image = models.ForeignKey(
-        get_model_name('FirmwareImage'), null=True, on_delete=models.SET_NULL
+        get_model_name('FirmwareImage'), null=True, on_delete=models.SET_NULL, verbose_name=_('image')
     )
     status = models.CharField(
-        max_length=12, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0]
+        verbose_name = _('status'), max_length=12, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0]
     )
-    log = models.TextField(blank=True)
+    log = models.TextField(verbose_name = _('log'), blank=True)
     batch = models.ForeignKey(
         get_model_name('BatchUpgradeOperation'),
         on_delete=models.CASCADE,
@@ -589,7 +589,7 @@ class AbstractUpgradeOperation(UpgradeOptionsMixin, TimeStampedEditableModel):
         cause = str(error)
         if recoverable:
             self.log_line(f'Detected a recoverable failure: {cause}.\n', save=False)
-            self.log_line('The upgrade operation will be retried soon.')
+            self.log_line(_('The upgrade operation will be retried soon.'))
             raise error
         self.status = 'failed'
         self.log_line(f'Max retries exceeded. Upgrade failed: {cause}.', save=False)
@@ -600,12 +600,12 @@ class AbstractUpgradeOperation(UpgradeOptionsMixin, TimeStampedEditableModel):
             conn = DeviceConnection.get_working_connection(self.device)
         except NoWorkingDeviceConnectionError as error:
             if error.connection is None:
-                self.log_line('No device connection available')
+                self.log_line(_('No device connection available'))
                 return
 
             log_template = (
-                'Failed to connect with device using {credentials}.'
-                ' Error: {failure_reason}'
+                _('Failed to connect with device using {credentials}.'
+                ' Error: {failure_reason}')
             )
             for conn in self.device.deviceconnection_set.select_related('credentials'):
                 self.log_line(
@@ -618,7 +618,7 @@ class AbstractUpgradeOperation(UpgradeOptionsMixin, TimeStampedEditableModel):
             self._recoverable_failure_handler(
                 recoverable,
                 RecoverableFailure(
-                    (
+                    _(
                         'Failed to establish connection with the device,'
                         ' tried all DeviceConnections'
                     )
